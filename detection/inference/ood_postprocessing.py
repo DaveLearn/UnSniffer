@@ -33,7 +33,7 @@ def torch_ncut_top(scores, res_boxes, similarity, thresh):
     clusters_scores = [scores[clusters_Container[key]] for key in clusters_Container.keys()]
     
     keepidx = torch.Tensor([clusters_Container[key][torch.argmax(clusters_scores[i])] for i, key in enumerate(clusters_Container.keys())])
-    return torch.tensor(keepidx, dtype=torch.int64)
+    return keepidx.clone().detach()
 
 def NMS(res_boxes, scores=None, iou_threshold=0.5):
     if scores == None:
