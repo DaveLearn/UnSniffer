@@ -6,7 +6,7 @@ cd evaluator/
 
 echo doing grid traverse
 
-python grid_traverse.py --dataset-dir ~/datasets/VOS/VOC_DATASET_ROOT --test-dataset voc_completely_annotation_pretest --outputdir ../output/  --config-file VOC-Detection/faster-rcnn/UnSniffer.yaml --inference-config Inference/standard_nms.yaml --random-seed 0 --image-corruption-level 0
+python grid_traverse.py --dataset-dir ~/datasets/VOS/VOC_DATASET_ROOT --test-dataset voc_completely_annotation_pretest --outputdir ../output/  --config-file VOC-Detection/faster-rcnn/UnSniffer-eval.yaml --inference-config Inference/standard_nms.yaml --random-seed 0 --image-corruption-level 0
 
 echo doing energy traverse
 
