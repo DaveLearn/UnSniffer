@@ -147,12 +147,12 @@ def pairwise_function(gtRects, detRects, device=torch.device('cpu')):
     return iou_matrix 
 
 def torch_ncut_detection(proposals, sim_matrix=None, original_labels=None, thresh=0.1, num_cuts=10, device=torch.device('cpu')):
-    w = torch.tensor(pairwise_function(proposals, proposals, device), dtype=torch.float64)
+    w = pairwise_function(proposals, proposals, device).clone().detach()
     w = w * torch.nn.Sigmoid()(sim_matrix)
 
-    node_index = torch.range(0, w.shape[0]-1, dtype=torch.int64, device=device)
+    node_index = torch.arange(0, w.shape[0], dtype=torch.int64, device=device)
     if original_labels == None:
-        original_labels = torch.range(0, w.shape[0]-1, dtype=torch.int64, device=device)
+        original_labels = torch.arange(0, w.shape[0], dtype=torch.int64, device=device)
     new_labels = torch.zeros(w.shape[0], dtype=torch.int64, device=device)
     _ncut_relabel(w, node_index, thresh, num_cuts, original_labels, new_labels)
     return new_labels.cpu()
