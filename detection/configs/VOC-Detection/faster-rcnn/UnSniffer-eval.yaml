@@ -1,0 +1,3 @@
+_BASE_: "UnSniffer.yaml"
+MODEL:
+  WEIGHTS: "../data/model_final.pth"
