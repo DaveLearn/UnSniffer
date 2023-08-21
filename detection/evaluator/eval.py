@@ -71,7 +71,7 @@ class Eval:
         self.img_path = self.args.dataset_dir + "/val2017/"
         self.test_OODdataset = self.args.test_dataset  
         if self.test_OODdataset == "coco_extended_ood_val":
-            self.gt_OODcoco_api = COCO(self.args.dataset_dir + "/annotations/instances_val2017_extended_ood.json")
+            self.gt_OODcoco_api = COCO(self.args.dataset_dir + "/annotations/instances_val2017_coco_ood.json")
         elif self.test_OODdataset == "coco_mixed_val":
             self.gt_OODcoco_api = COCO(self.args.dataset_dir + "/annotations/instances_val2017_mixed_OOD.json")
             self.gt_IDcoco_api = COCO(self.args.dataset_dir + "/annotations/instances_val2017_mixed_ID.json")
