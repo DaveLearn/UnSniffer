@@ -73,7 +73,7 @@ def voc_eval(detections, annotations, classname, ovthresh=0.5, use_07_metric=Tru
         R = [obj[:4] for obj in annotations[image_name] if int(obj[-1]) == classname]
         bbox = np.array(R)
         # difficult is not stored: take it as 0/false
-        difficult = np.array([0] * len(R)).astype(np.bool)
+        difficult = np.array([0] * len(R)).astype(bool)
         det = [False] * len(R)
         npos = npos + sum(~difficult)
         class_gt_bboxes[image_name] = {'bbox': bbox, 'difficult': difficult, 'det': det}
@@ -173,7 +173,7 @@ def voc_eval(detections, annotations, classname, ovthresh=0.5, use_07_metric=Tru
     for image_name in annotations:
         R = [obj[:4] for obj in annotations[image_name] if int(obj[-1]) == 81]
         bbox = np.array(R)
-        difficult = np.array([0] * len(R)).astype(np.bool)
+        difficult = np.array([0] * len(R)).astype(bool)
         det = [False] * len(R)
         n_unk = n_unk + sum(~difficult)
         unknown_class_recs[image_name] = {"bbox": bbox, "difficult": difficult, "det": det}

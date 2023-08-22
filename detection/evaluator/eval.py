@@ -1,3 +1,4 @@
+import json
 import os
 import cv2
 import sys
@@ -120,10 +121,13 @@ class Eval:
         self.sort_scores_name = "complete_scores"
         self.readdata(self.gt_OODcoco_api, self.OOD_res_coco_api)
         recall, precision, ap, rec, prec, state, det_image_files = voc_evaluate(self.res, self.OOD_gt, 81)
+
+
         print("Ap: ", ap)
         print("precision: ", precision)
         print("recall: ", recall)
         print("f1: ", 2 * (precision * recall) / (precision + recall))
+        # print("recalls", json.dumps([f"({r}:{p})" for idx,(r,p) in enumerate(zip(rec, prec)) if idx % 10 == 0]))
 
 
 eva = Eval()

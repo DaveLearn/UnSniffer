@@ -75,7 +75,7 @@ def voc_evaluate(detections, annotations, cid, ovthresh=0.5, use_07_metric=True)
         R = [obj[:4] for obj in annotations[image_name] if int(obj[-1]) == cid]
         bbox = numpy.array(R)
         # difficult is not stored: take it as 0/false
-        difficult = numpy.array([0] * len(R)).astype(numpy.bool)
+        difficult = numpy.array([0] * len(R)).astype(bool)
         det = [False] * len(R)
         npos = npos + sum(~difficult)
         class_gt_bboxes[image_name] = {'bbox': bbox, 'difficult': difficult, 'det': det}
