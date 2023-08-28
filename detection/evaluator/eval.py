@@ -1,5 +1,6 @@
 import json
 import os
+from typing import Optional
 import cv2
 import sys
 import copy
@@ -57,6 +58,12 @@ def set_up_parse():
         type=int,
         default=0,
         help="Inference parameter: Image corruption level between 0-5. Default is no corruption, level 0.")
+    
+    args.add_argument(
+        "--detection-json",
+        type=str,
+        default="",
+        help="The path to the detection json file")
 
     return args.parse_args()
 
@@ -66,7 +73,7 @@ class Eval:
     def __init__(self):
         self.args = set_up_parse()
         modelname = (self.args.config_file).split("/")[2].split(".")[0]
-        cfg_OUTPUT_DIR = "../data/VOC-Detection/faster-rcnn/{}/random_seed_0".format(modelname)
+       
 
         # load groundtruth
         self.img_path = self.args.dataset_dir + "/val2017/"
@@ -76,15 +83,22 @@ class Eval:
         elif self.test_OODdataset == "coco_mixed_val":
             self.gt_OODcoco_api = COCO(self.args.dataset_dir + "/annotations/instances_val2017_mixed_OOD.json")
             self.gt_IDcoco_api = COCO(self.args.dataset_dir + "/annotations/instances_val2017_mixed_ID.json")
+        else:
+            assert False, "unexpected test datasetname"
         # load prediction
-        OOD_inference_output_dir = get_inference_output_dir(
-            cfg_OUTPUT_DIR,
-            self.test_OODdataset,
-            self.args.inference_config,
-            self.args.image_corruption_level)
-        OOD_prediction_file_name = os.path.join(
-            OOD_inference_output_dir,
-            'coco_instances_results_idood.json')
+        if self.args.detection_json == "":
+            cfg_OUTPUT_DIR = "../data/VOC-Detection/faster-rcnn/{}/random_seed_0".format(modelname)
+            OOD_inference_output_dir = get_inference_output_dir(
+                cfg_OUTPUT_DIR,
+                self.test_OODdataset,
+                self.args.inference_config,
+                self.args.image_corruption_level)
+            OOD_prediction_file_name = os.path.join(
+                OOD_inference_output_dir,
+                'coco_instances_results_idood.json')
+        else:
+            OOD_prediction_file_name = self.args.detection_json
+
         self.OOD_res_coco_api = self.gt_OODcoco_api.loadRes(OOD_prediction_file_name)
         imgidlist = list(self.gt_OODcoco_api.imgs.keys())
         self.imgidlist = []
@@ -106,7 +120,7 @@ class Eval:
                 img_res = np.array([])
             else:
                 # xyhw -> xyxy
-                img_res = np.array([res['bbox'] + [res[self.sort_scores_name]]  for res in res_list_this_img])
+                img_res = np.array([res['bbox'] + [res[self.sort_scores_name]] for res in res_list_this_img ])
                 img_res[:, 2] = img_res[:, 0] + img_res[:, 2]
                 img_res[:, 3] = img_res[:, 1] + img_res[:, 3]
             self.res[81].update({imgID: img_res})
@@ -118,7 +132,8 @@ class Eval:
             self.OOD_gt.update({imgID: img_gt})
 
     def run(self):
-        self.sort_scores_name = "complete_scores"
+        #self.sort_scores_name = "complete_scores"
+        self.sort_scores_name = "score"
         self.readdata(self.gt_OODcoco_api, self.OOD_res_coco_api)
         recall, precision, ap, rec, prec, state, det_image_files = voc_evaluate(self.res, self.OOD_gt, 81)
 
